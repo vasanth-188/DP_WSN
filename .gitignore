@@ -1,0 +1,51 @@
+# WSN-DQN Project .gitignore
+
+# Build artifacts
+build/
+cmake-cache/
+*.o
+*.so
+*.dylib
+
+# ns-3 generated files
+*.xml
+*.pcap
+*.tr
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Temporary results (regenerated on run)
+*.json
+!package.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Model checkpoints (large files)
+dqn_checkpoint_*.json
+dqn_final.json
+
+# Simulation outputs
+wsn_*_results.json
+wsn_*_anim.xml
+wsn_dqn_history.json
+wsn_dqn_state.json
+
+# Keep docs/images but ignore regeneratable plots
+# Uncomment below if you want to ignore generated plots too
+# docs/images/*.png
