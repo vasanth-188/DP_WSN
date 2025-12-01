@@ -73,20 +73,29 @@ ns-3.46.1/
 
 ### Software
 
-| Component | Version | Purpose |
-|-----------|---------|---------|
-| ns-3 | 3.46+ | Network simulation |
-| Python | 3.8+ | DQN agent |
-| CMake | 3.16+ | Build system |
-| C++ Compiler | GCC 9+ / Clang 12+ | Compile ns-3 |
-| nlohmann/json | 3.x | JSON handling in C++ |
+| Component | Version | Purpose | Install Command |
+|-----------|---------|---------|-----------------|
+| ns-3 | 3.46+ | Network simulation | See Installation |
+| Python | 3.8+ | DQN agent | `brew install python` (macOS) / `apt install python3` (Ubuntu/WSL2) |
+| CMake | 3.16+ | Build system | `brew install cmake` (macOS) / `apt install cmake` (Ubuntu/WSL2) |
+| C++ Compiler | GCC 9+ / Clang 12+ | Compile ns-3 | `apt install build-essential` (Ubuntu/WSL2) |
+| nlohmann/json | 3.x | JSON handling in C++ | `brew install nlohmann-json` (macOS) / `apt install nlohmann-json3-dev` (Ubuntu/WSL2) |
 
 ### Python Packages
 
+```bash
+# macOS / Linux / Windows (WSL2)
+pip3 install numpy>=1.20 matplotlib>=3.5
 ```
-numpy>=1.20
-matplotlib>=3.5
-```
+
+### Platform Support
+
+| Platform | Support Level | Notes |
+|----------|--------------|-------|
+| macOS | ✅ Full | Native support |
+| Linux (Ubuntu) | ✅ Full | Native support |
+| Windows (WSL2) | ✅ Full | Requires WSL2 with Ubuntu |
+| Windows (Native) | ❌ Not Supported | ns-3 requires Unix-like environment |
 
 ---
 
@@ -223,6 +232,7 @@ Copy the following files to your ns-3 directory:
 ### Option 1: Run Simulation Only (No Python)
 
 ```bash
+# macOS / Linux / Windows (WSL2)
 cd /path/to/ns-3.46.1
 
 # Build
@@ -236,12 +246,14 @@ cd /path/to/ns-3.46.1
 
 **Terminal 1 - Start Python Bridge:**
 ```bash
+# macOS / Linux / Windows (WSL2)
 cd /path/to/ns-3.46.1
 python3 simulation_bridge.py
 ```
 
 **Terminal 2 - Run Simulation:**
 ```bash
+# macOS / Linux / Windows (WSL2)
 cd /path/to/ns-3.46.1
 ./ns3 run wsn_simulation
 ```
@@ -249,6 +261,7 @@ cd /path/to/ns-3.46.1
 ### Option 3: Train DQN Model
 
 ```bash
+# macOS / Linux / Windows (WSL2)
 cd /path/to/ns-3.46.1
 
 # Quick training (20 episodes)
@@ -261,9 +274,12 @@ python3 train_model.py
 ### Option 4: Generate Visualization Plots
 
 ```bash
+# macOS / Linux / Windows (WSL2)
 python3 visualize_results.py
 # Plots saved to docs/images/
 ```
+
+> **Note for Windows Users**: All commands above should be run inside WSL2 Ubuntu terminal, not in PowerShell or CMD.
 
 ---
 
@@ -433,6 +449,10 @@ brew install nlohmann-json
 
 # Ubuntu/WSL2
 sudo apt install nlohmann-json3-dev
+
+# Windows (WSL2) - run inside WSL terminal
+sudo apt update
+sudo apt install nlohmann-json3-dev
 ```
 
 **Error: CMake version too old**
@@ -440,8 +460,22 @@ sudo apt install nlohmann-json3-dev
 # macOS
 brew upgrade cmake
 
-# Ubuntu
+# Ubuntu/WSL2
 sudo apt install cmake --upgrade
+
+# Windows (WSL2) - install latest CMake
+sudo apt remove cmake
+sudo apt install -y software-properties-common
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo apt-key add -
+sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ jammy main'
+sudo apt update && sudo apt install cmake
+```
+
+**Error: GCC/G++ not found (Windows WSL2)**
+```bash
+# Windows (WSL2)
+sudo apt update
+sudo apt install -y build-essential g++ gcc
 ```
 
 ### Runtime Errors
@@ -450,25 +484,109 @@ sudo apt install cmake --upgrade
 - Make sure Python bridge is running BEFORE ns-3 simulation
 - Check that ports 5000/5001 are not in use
 
+```bash
+# Check port usage on macOS/Linux/WSL2
+lsof -i :5000
+lsof -i :5001
+
+# Kill process using port (if needed)
+kill -9 <PID>
+
+# Windows (PowerShell) - check ports
+netstat -ano | findstr :5000
+netstat -ano | findstr :5001
+
+# Windows (PowerShell) - kill process
+taskkill /PID <PID> /F
+```
+
 **Error: ns-3 build fails**
 ```bash
-# Clean and rebuild
+# macOS / Linux / Windows (WSL2) - Clean and rebuild
 ./ns3 clean
 ./ns3 configure --build-profile=optimized
 ./ns3 build
+```
+
+**Error: Permission denied on ns3 script (Windows WSL2)**
+```bash
+# Windows (WSL2)
+chmod +x ns3
+chmod +x test.py
 ```
 
 ### Python Errors
 
 **Error: ModuleNotFoundError: numpy**
 ```bash
+# macOS
 pip3 install numpy matplotlib
+
+# Ubuntu/Linux
+pip3 install numpy matplotlib
+
+# Windows (WSL2)
+pip3 install numpy matplotlib
+
+# Windows (Native PowerShell)
+pip install numpy matplotlib
+```
+
+**Error: Python not found (Windows)**
+```powershell
+# Windows - Install Python from Microsoft Store or:
+winget install Python.Python.3.11
+
+# Or download from https://www.python.org/downloads/
+# Make sure to check "Add Python to PATH" during installation
 ```
 
 **Error: Permission denied**
 ```bash
+# macOS / Linux / WSL2
 chmod +x test.py
 chmod +x simulation_bridge.py
+chmod +x ns3
+```
+
+### Windows-Specific Issues
+
+**Error: WSL2 not installed**
+```powershell
+# Run in PowerShell as Administrator
+wsl --install -d Ubuntu-22.04
+
+# If WSL is installed but outdated:
+wsl --update
+
+# Set WSL2 as default
+wsl --set-default-version 2
+```
+
+**Error: Cannot access files between Windows and WSL2**
+```bash
+# Access Windows files from WSL2
+cd /mnt/c/Users/YourUsername/Desktop
+
+# Access WSL2 files from Windows Explorer
+# Type in address bar: \\wsl$\Ubuntu-22.04\home\username
+```
+
+**Error: Display/GUI issues in WSL2 (for NetAnim)**
+```bash
+# Install X server on Windows (VcXsrv or X410)
+# Then in WSL2:
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+echo 'export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk "{print \$2}"):0' >> ~/.bashrc
+```
+
+**Error: Slow file performance in WSL2**
+```bash
+# Store project files inside WSL2 filesystem for better performance
+# Instead of /mnt/c/..., use ~/projects/
+mkdir -p ~/projects
+cd ~/projects
+git clone https://github.com/vasanth-188/DP_WSN.git
 ```
 
 ---
